@@ -87,7 +87,7 @@ func (g *Graph) Graph(f GraphFunc) error {
 		y := f(x)
 
 		sx := int(x*640/r.Dx()) - offX
-		sy := int(y*480/r.Dy()) - offY
+		sy := 480 - (int(y*480/r.Dy()) - offY)
 
 		if last.X >= 0 {
 			err := g.d.Line(last, image.Pt(sx, sy))
