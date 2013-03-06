@@ -1,7 +1,7 @@
 package graph
 
 import (
-	"image"
+	"math"
 )
 
 type GraphFunc func(x float64) (y float64)
@@ -24,24 +24,25 @@ func New(d Output) *Graph {
 
 func (g *Graph) Graph(f GraphFunc) error {
 	r := g.Bounds.Canon()
-	offX := int(r.Min.X * float64(g.d.Width()) / r.Dx())
-	offY := int(r.Min.Y * float64(g.d.Height()) / r.Dy())
+	offX := r.Min.X * float64(g.d.Width()) / r.Dx()
+	offY := r.Min.Y * float64(g.d.Height()) / r.Dy()
 
-	last := image.Pt(-1, -1)
+	last := Point{math.NaN(), math.NaN()}
 	for x := r.Min.X; x < r.Max.X+g.Precision; x += g.Precision {
 		y := f(x)
 
-		sx := int(x*float64(g.d.Width())/r.Dx()) - offX
-		sy := g.d.Height() - (int(y*float64(g.d.Height())/r.Dy()) - offY)
+		var to Point
+		to.X = (x * float64(g.d.Width()) / r.Dx()) - offX
+		to.Y = float64(g.d.Height()) - ((y * float64(g.d.Height()) / r.Dy()) - offY)
 
-		if last.X >= 0 {
-			err := g.d.Line(last, image.Pt(sx, sy))
+		if !(math.IsNaN(last.Y) || math.IsInf(last.Y, 0) || math.IsNaN(to.Y) || math.IsInf(to.Y, 0)) {
+			err := g.d.Line(last.ImagePoint(), to.ImagePoint())
 			if err != nil {
 				return err
 			}
 		}
 
-		last = image.Pt(sx, sy)
+		last = to
 	}
 
 	return nil

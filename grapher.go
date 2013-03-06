@@ -2,24 +2,33 @@ package main
 
 import (
 	"./graph"
+	"flag"
 	"github.com/DeedleFake/sdl"
 	"image/color"
 	"math"
 	"time"
 )
 
+func function(x float64) float64 {
+	return math.Log(x)
+}
+
 func main() {
-	d, err := NewDisplay("Graph", 640, 480)
+	var flags struct {
+		w, h int
+		p    float64
+	}
+	flag.IntVar(&flags.w, "w", 640, "The width of the screen.")
+	flag.IntVar(&flags.h, "h", 480, "The height of the screen.")
+	flag.Float64Var(&flags.p, "p", .1, "The precision of the graph.")
+	flag.Parse()
+
+	d, err := NewDisplay("Graph", flags.w, flags.h)
 	if err != nil {
 		panic(err)
 	}
 
-	err = d.Color(color.Black)
-	if err != nil {
-		panic(err)
-	}
-
-	err = d.Clear()
+	err = d.Clear(color.Black)
 	if err != nil {
 		panic(err)
 	}
@@ -34,9 +43,9 @@ func main() {
 		panic(err)
 	}
 
-	g.Precision = .01
+	g.Precision = flags.p
 
-	err = g.Graph(math.Sin)
+	err = g.Graph(function)
 	if err != nil {
 		panic(err)
 	}

@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"image"
 	"math"
 )
 
@@ -33,4 +34,8 @@ func (r Rect) Dy() float64 {
 
 type Point struct {
 	X, Y float64
+}
+
+func (p Point) ImagePoint() image.Point {
+	return image.Pt(int(p.X), int(p.Y))
 }
