@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./graph"
+	".."
 	"flag"
 	"github.com/DeedleFake/sdl"
 	"image"
@@ -48,7 +48,7 @@ func main() {
 	flag.Float64Var(&flags.animSpeed, "anim.speed", .01, "Speed of animation.")
 	flag.Parse()
 
-	d, err := NewDisplay("Graph", flags.w, flags.h)
+	d, err := NewDisplay("Graph Example", flags.w, flags.h)
 	if err != nil {
 		panic(err)
 	}
