@@ -109,6 +109,18 @@ func (d *Display) Flip() {
 	d.ren.Present()
 }
 
+func (d *Display) Width() int {
+	w, _ := d.win.GetSize()
+
+	return w
+}
+
+func (d *Display) Height() int {
+	_, h := d.win.GetSize()
+
+	return h
+}
+
 func RGBA8(c color.Color) (r8, g8, b8, a8 uint8) {
 	r, g, b, a := c.RGBA()
 
