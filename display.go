@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"runtime"
+	"sync"
 )
 
 type Display struct {
@@ -58,10 +59,19 @@ func (d *Display) Line(from, to image.Point) error {
 	}
 
 	s := float64(to.Y-from.Y) / float64(to.X-from.X)
+
+	var wg sync.WaitGroup
 	for x := from.X; x < to.X; x++ {
-		y := int(s*float64(x)) + from.X
-		d.Set(x, y, color.White)
+		wg.Add(1)
+
+		go func(x int) {
+			defer wg.Done()
+
+			y := int(s*float64(x)) + from.X
+			d.Set(x, y, color.White)
+		}(x)
 	}
+	wg.Wait()
 
 	err := d.UpdateRect(image.Rectangle{from, to})
 	if err != nil {
