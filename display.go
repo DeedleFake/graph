@@ -34,6 +34,8 @@ func NewDisplay(title string, w, h int) (*Display, error) {
 	d := &Display{
 		win: win,
 		ren: ren,
+
+		c: color.Black,
 	}
 	runtime.SetFinalizer(d, (*Display).Close)
 
@@ -114,10 +116,7 @@ func (d *Display) Line(from, to image.Point) error {
 }
 
 func (d *Display) Clear(c color.Color) error {
-	old := d.c
-	defer func() {
-		d.c = old
-	}()
+	defer d.Color(d.c)
 
 	err := d.Color(c)
 	if err != nil {

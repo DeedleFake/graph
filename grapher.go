@@ -10,8 +10,10 @@ import (
 	"time"
 )
 
-func function(x float64) float64 {
-	return math.Log(x)
+func next(a float64) func(float64) float64 {
+	return func(x float64) float64 {
+		return math.Sin(x * a)
+	}
 }
 
 func drawAxes(d *Display) error {
@@ -33,36 +35,20 @@ func main() {
 		w, h int
 		p    float64
 		axes bool
+
+		animFrom, animTo float64
+		animSpeed        float64
 	}
 	flag.IntVar(&flags.w, "w", 640, "The width of the screen.")
 	flag.IntVar(&flags.h, "h", 480, "The height of the screen.")
 	flag.Float64Var(&flags.p, "p", .1, "The precision of the graph.")
 	flag.BoolVar(&flags.axes, "axes", true, "Draw axes.")
+	flag.Float64Var(&flags.animFrom, "anim.from", -1, "What number to animate from.")
+	flag.Float64Var(&flags.animTo, "anim.to", 1, "What number to animate to.")
+	flag.Float64Var(&flags.animSpeed, "anim.speed", .01, "Speed of animation.")
 	flag.Parse()
 
 	d, err := NewDisplay("Graph", flags.w, flags.h)
-	if err != nil {
-		panic(err)
-	}
-
-	err = d.Clear(color.Black)
-	if err != nil {
-		panic(err)
-	}
-
-	if flags.axes {
-		err = d.Color(color.White)
-		if err != nil {
-			panic(err)
-		}
-
-		err = drawAxes(d)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	err = d.Color(color.RGBA{255, 0, 0, 0})
 	if err != nil {
 		panic(err)
 	}
@@ -74,11 +60,7 @@ func main() {
 
 	g.Precision = flags.p
 
-	err = g.Graph(function)
-	if err != nil {
-		panic(err)
-	}
-	d.Flip()
+	a := flags.animFrom
 
 	fps := time.NewTicker(time.Second / 60)
 	for fps != nil {
@@ -90,6 +72,48 @@ func main() {
 				fps = nil
 			}
 		}
+
+		a += flags.animSpeed
+		if (a >= flags.animTo) || (a <= flags.animFrom) {
+			flags.animSpeed *= -1
+		}
+
+		err = d.Clear(color.Black)
+		if err != nil {
+			panic(err)
+		}
+
+		if flags.axes {
+			err = d.Color(color.White)
+			if err != nil {
+				panic(err)
+			}
+
+			err = drawAxes(d)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		c := color.RGBA{255, 0, 255, 255}
+		switch {
+		case flags.animSpeed < 0:
+			c = color.RGBA{0, 0, 255, 255}
+		case flags.animSpeed > 0:
+			c = color.RGBA{255, 0, 0, 255}
+		}
+
+		err = d.Color(c)
+		if err != nil {
+			panic(err)
+		}
+
+		err = g.Graph(next(a))
+		if err != nil {
+			panic(err)
+		}
+
+		d.Flip()
 
 		if fps != nil {
 			<-fps.C
