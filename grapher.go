@@ -108,7 +108,7 @@ func main() {
 			panic(err)
 		}
 
-		err = g.Graph(next(a))
+		err = g.Cart(next(a))
 		if err != nil {
 			panic(err)
 		}
