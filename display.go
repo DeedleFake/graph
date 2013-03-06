@@ -10,6 +10,8 @@ import (
 type Display struct {
 	win *sdl.Window
 	ren *sdl.Renderer
+
+	c color.Color
 }
 
 func NewDisplay(title string, w, h int) (*Display, error) {
@@ -94,14 +96,34 @@ func (d *Display) Close() error {
 //}
 
 func (d *Display) Color(c color.Color) error {
-	return d.ren.SetDrawColor(RGBA8(c))
+	old := d.c
+
+	err := d.ren.SetDrawColor(RGBA8(c))
+	if err != nil {
+		d.c = old
+		return err
+	}
+
+	d.c = c
+
+	return nil
 }
 
 func (d *Display) Line(from, to image.Point) error {
 	return d.ren.DrawLine(from.X, from.Y, to.X, to.Y)
 }
 
-func (d *Display) Clear() error {
+func (d *Display) Clear(c color.Color) error {
+	old := d.c
+	defer func() {
+		d.c = old
+	}()
+
+	err := d.Color(c)
+	if err != nil {
+		return err
+	}
+
 	return d.ren.Clear()
 }
 
