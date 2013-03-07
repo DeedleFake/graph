@@ -1,3 +1,14 @@
+// Package graph implements a simple mathematical graph generator.
+//
+// The main type is Graph, which is capable of rendering to an Output. For convience, a type called ImageOutput is provided which wraps several of draw.Image's methods, allowing one to be used as an Output.
+//
+// For example:
+//
+//	img := image.NewRGBA(image.Rect(0, 0, 320, 240))
+//	imgout := graph.ImageOutput{img, color.Black}
+//
+//	g := NewGraph(imgout)
+//	g.Cart(math.Sin)
 package graph
 
 import (
