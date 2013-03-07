@@ -17,7 +17,7 @@ To use, import
 
 > github.com/DeedleFake/graph
 
-A Graph requires an Output to render to. Currently, no implementations of Output are provided. The ability to render to a [draw.Image](http://www.golang.org/pkg/image/draw#Image) is planned, but not yet implemented.
+A Graph requires an Output to render to. The ability to render to a [draw.Image](http://www.golang.org/pkg/image/draw#Image) is provided in the form of an implementation of Output called ImageOutput.
 
 For more documentation, see [GoDoc][docs]. For examples, see the examples subdirectory.
 
