@@ -45,3 +45,38 @@ type Point struct {
 func (p Point) ImagePoint() image.Point {
 	return image.Pt(int(p.X), int(p.Y))
 }
+
+// GraphToOutput converts Graph coordinates to Output coordinates.
+func (p Point) GraphToOutput(gb Rect, ob image.Rectangle) Point {
+	gb = gb.Canon()
+	ob = ob.Canon()
+
+	rDx := float64(ob.Dx()) / gb.Dx()
+	rDy := float64(ob.Dy()) / gb.Dy()
+
+	off := Point{
+		X: gb.Min.X * rDx,
+		Y: gb.Min.Y * rDy,
+	}
+
+	return Point{
+		X: (p.X * rDx) - off.X,
+		Y: (p.Y * rDy) - off.Y,
+	}
+}
+
+// GraphToOutputNoOffset converts Graph coordinates to Output
+// coordinates, but doesn't apply an offset. This is only useful for
+// special cases.
+func (p Point) GraphToOutputNoOffset(gb Rect, ob image.Rectangle) Point {
+	gb = gb.Canon()
+	ob = ob.Canon()
+
+	rDx := float64(ob.Dx()) / gb.Dx()
+	rDy := float64(ob.Dy()) / gb.Dy()
+
+	return Point{
+		X: p.X * rDx,
+		Y: p.Y * rDy,
+	}
+}

@@ -49,8 +49,11 @@ func (g *Graph) Cart(f CartFunc) error {
 	r := g.Bounds.Canon()
 	ob := g.d.Bounds().Canon()
 
-	offX := (r.Min.X * float64(ob.Dx()) / r.Dx()) - float64(ob.Min.X)
-	offY := (r.Min.Y * float64(ob.Dy()) / r.Dy()) - float64(ob.Min.Y)
+	// TODO: Implement a method for point that calculates the offset.
+	off := Point{
+		X: (r.Min.X * float64(ob.Dx()) / r.Dx()) - float64(ob.Min.X),
+		Y: (r.Min.Y * float64(ob.Dy()) / r.Dy()) - float64(ob.Min.Y),
+	}
 
 	p := math.Abs(g.Precision)
 
@@ -58,9 +61,9 @@ func (g *Graph) Cart(f CartFunc) error {
 	for x := r.Min.X; x < r.Max.X+p; x += p {
 		y := f(x)
 
-		var to Point
-		to.X = (x * float64(ob.Dx()) / r.Dx()) - offX
-		to.Y = float64(ob.Dy()) - ((y * float64(ob.Dy()) / r.Dy()) - offY)
+		to := Point{x, y}.GraphToOutputNoOffset(r, ob)
+		to.X -= off.X
+		to.Y = float64(ob.Dy()) - (to.Y - off.Y)
 
 		if !(math.IsNaN(last.Y) || math.IsInf(last.Y, 0) || math.IsNaN(to.Y) || math.IsInf(to.Y, 0)) {
 			err := g.d.Line(last.ImagePoint(), to.ImagePoint())
