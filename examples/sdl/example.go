@@ -35,7 +35,10 @@ func drawAxes(d *Display) error {
 func main() {
 	var flags struct {
 		w, h int
-		p    float64
+
+		bx, by, bw, bh float64
+		p              float64
+
 		axes bool
 
 		animFrom, animTo float64
@@ -43,8 +46,15 @@ func main() {
 	}
 	flag.IntVar(&flags.w, "w", 640, "The width of the screen.")
 	flag.IntVar(&flags.h, "h", 480, "The height of the screen.")
+
+	flag.Float64Var(&flags.bx, "b.x", -5, "The x coordinate of the top-left corner of the graph.")
+	flag.Float64Var(&flags.by, "b.y", -5, "The y coordinate of the top-left corner of the graph.")
+	flag.Float64Var(&flags.bw, "b.w", 10, "The width of the graph.")
+	flag.Float64Var(&flags.bh, "b.h", 10, "The height of the graph.")
 	flag.Float64Var(&flags.p, "p", .1, "The precision of the graph.")
+
 	flag.BoolVar(&flags.axes, "axes", true, "Draw axes.")
+
 	flag.Float64Var(&flags.animFrom, "anim.from", -1, "What number to animate from.")
 	flag.Float64Var(&flags.animTo, "anim.to", 1, "What number to animate to.")
 	flag.Float64Var(&flags.animSpeed, "anim.speed", .01, "Speed of animation.")
@@ -60,6 +70,7 @@ func main() {
 		panic(err)
 	}
 
+	g.Bounds = graph.Rt(flags.bx, flags.by, flags.bw, flags.bh)
 	g.Precision = flags.p
 
 	a := flags.animFrom
