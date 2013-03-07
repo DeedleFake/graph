@@ -38,8 +38,8 @@ func (g *Graph) Cart(f CartFunc) error {
 	r := g.Bounds.Canon()
 	ob := g.d.Bounds().Canon()
 
-	offX := (r.Min.X * float64(ob.Dx()) / r.Dx()) + float64(ob.Min.X)
-	offY := (r.Min.Y * float64(ob.Dy()) / r.Dy()) + float64(ob.Min.Y)
+	offX := (r.Min.X * float64(ob.Dx()) / r.Dx()) - float64(ob.Min.X)
+	offY := (r.Min.Y * float64(ob.Dy()) / r.Dy()) - float64(ob.Min.Y)
 
 	p := math.Abs(g.Precision)
 

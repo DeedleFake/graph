@@ -12,5 +12,8 @@ type Output interface {
 
 	// Bounds returns the bounds of the output. It is analogous to
 	// image.Bounds().
+	//
+	// BUG: Bounds that don't have their top-left corner at (0, 0) don't
+	//      work.
 	Bounds() image.Rectangle
 }
