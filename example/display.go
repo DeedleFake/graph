@@ -84,16 +84,10 @@ func (d *Display) Flip() {
 	d.ren.Present()
 }
 
-func (d *Display) Width() int {
-	w, _ := d.win.GetSize()
+func (d *Display) Bounds() image.Rectangle {
+	w, h := d.win.GetSize()
 
-	return w
-}
-
-func (d *Display) Height() int {
-	_, h := d.win.GetSize()
-
-	return h
+	return image.Rect(0, 0, w, h)
 }
 
 func RGBA8(c color.Color) (r8, g8, b8, a8 uint8) {

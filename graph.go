@@ -36,8 +36,10 @@ func New(d Output) *Graph {
 // It returns an error, if any.
 func (g *Graph) Cart(f CartFunc) error {
 	r := g.Bounds.Canon()
-	offX := r.Min.X * float64(g.d.Width()) / r.Dx()
-	offY := r.Min.Y * float64(g.d.Height()) / r.Dy()
+	ob := g.d.Bounds().Canon()
+
+	offX := (r.Min.X * float64(ob.Dx()) / r.Dx()) + float64(ob.Min.X)
+	offY := (r.Min.Y * float64(ob.Dy()) / r.Dy()) + float64(ob.Min.Y)
 
 	p := math.Abs(g.Precision)
 
@@ -46,8 +48,8 @@ func (g *Graph) Cart(f CartFunc) error {
 		y := f(x)
 
 		var to Point
-		to.X = (x * float64(g.d.Width()) / r.Dx()) - offX
-		to.Y = float64(g.d.Height()) - ((y * float64(g.d.Height()) / r.Dy()) - offY)
+		to.X = (x * float64(ob.Dx()) / r.Dx()) - offX
+		to.Y = float64(ob.Dy()) - ((y * float64(ob.Dy()) / r.Dy()) - offY)
 
 		if !(math.IsNaN(last.Y) || math.IsInf(last.Y, 0) || math.IsNaN(to.Y) || math.IsInf(to.Y, 0)) {
 			err := g.d.Line(last.ImagePoint(), to.ImagePoint())

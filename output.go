@@ -10,9 +10,7 @@ type Output interface {
 	// will be returned by the calling Graph method.
 	Line(from, to image.Point) error
 
-	// Width returns the width of the output.
-	Width() int
-
-	// Height returns the height of the output.
-	Height() int
+	// Bounds returns the bounds of the output. It is analogous to
+	// image.Bounds().
+	Bounds() image.Rectangle
 }

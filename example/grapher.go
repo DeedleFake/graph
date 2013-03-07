@@ -17,12 +17,14 @@ func next(a float64) func(float64) float64 {
 }
 
 func drawAxes(d *Display) error {
-	err := d.Line(image.Pt(d.Width()/2, 0), image.Pt(d.Width()/2, d.Height()))
+	b := d.Bounds()
+
+	err := d.Line(image.Pt(b.Dx()/2, 0), image.Pt(b.Dx()/2, b.Dy()))
 	if err != nil {
 		return err
 	}
 
-	err = d.Line(image.Pt(0, d.Height()/2), image.Pt(d.Width(), d.Height()/2))
+	err = d.Line(image.Pt(0, b.Dy()/2), image.Pt(b.Dx(), b.Dy()/2))
 	if err != nil {
 		return err
 	}
