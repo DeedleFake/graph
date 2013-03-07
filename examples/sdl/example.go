@@ -16,15 +16,23 @@ func next(a float64) func(float64) float64 {
 	}
 }
 
-func drawAxes(d *Display) error {
-	b := d.Bounds()
+func drawAxes(d *Display, gb graph.Rect) error {
+	b := d.Bounds().Canon()
+	gb = gb.Canon()
 
-	err := d.Line(image.Pt(b.Dx()/2, 0), image.Pt(b.Dx()/2, b.Dy()))
+	origin := graph.Point{}.GraphToOutput(gb, b).ImagePoint()
+
+	top := image.Pt(origin.X, b.Min.Y)
+	bottom := image.Pt(origin.X, b.Max.Y)
+	left := image.Pt(b.Min.X, origin.Y)
+	right := image.Pt(b.Max.X, origin.Y)
+
+	err := d.Line(top, bottom)
 	if err != nil {
 		return err
 	}
 
-	err = d.Line(image.Pt(0, b.Dy()/2), image.Pt(b.Dx(), b.Dy()/2))
+	err = d.Line(left, right)
 	if err != nil {
 		return err
 	}
@@ -102,7 +110,7 @@ func main() {
 				panic(err)
 			}
 
-			err = drawAxes(d)
+			err = drawAxes(d, g.Bounds)
 			if err != nil {
 				panic(err)
 			}
