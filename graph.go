@@ -63,7 +63,7 @@ func (g *Graph) Cart(f CartFunc) error {
 
 		to := Point{x, y}.GraphToOutputNoOffset(r, ob)
 		to.X -= off.X
-		to.Y = float64(ob.Dy()) - (to.Y - off.Y)
+		to.Y = float64(ob.Dy()) - (to.Y - off.Y) // BUG: This doesn't work when the y offset of the graph isn't 0.
 
 		if !(math.IsNaN(last.Y) || math.IsInf(last.Y, 0) || math.IsNaN(to.Y) || math.IsInf(to.Y, 0)) {
 			err := g.d.Line(last.ImagePoint(), to.ImagePoint())
