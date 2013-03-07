@@ -1,7 +1,7 @@
 package main
 
 import (
-	".."
+	"../.."
 	"flag"
 	"github.com/DeedleFake/sdl"
 	"image"
