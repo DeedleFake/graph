@@ -19,7 +19,7 @@ To use, import
 
 A Graph requires an Output to render to. Currently, no implementations of Output are provided. The ability to render to a [draw.Image](http://www.golang.org/pkg/image/draw#Image) is planned, but not yet implemented.
 
-For more documentation, see [GoDoc][docs]. For a complete working example, see the example subdirectory.
+For more documentation, see [GoDoc][docs]. For examples, see the examples subdirectory.
 
 Authors
 -------
