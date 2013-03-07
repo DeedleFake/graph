@@ -1,8 +1,8 @@
 package main
 
 import (
-	"../.."
 	"fmt"
+	"github.com/DeedleFake/graph"
 	"image"
 	"image/color"
 	"image/png"

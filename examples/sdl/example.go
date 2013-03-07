@@ -1,8 +1,8 @@
 package main
 
 import (
-	"../.."
 	"flag"
+	"github.com/DeedleFake/graph"
 	"github.com/DeedleFake/sdl"
 	"image"
 	"image/color"
