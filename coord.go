@@ -40,6 +40,11 @@ type Point struct {
 	X, Y float64
 }
 
+// IsValid returns true if neither p.X nor p.Y are infinity or NaN.
+func (p Point) IsValid() bool {
+	return !(math.IsNaN(p.X) || math.IsNaN(p.Y) || math.IsInf(p.X, 0) || math.IsInf(p.Y, 0))
+}
+
 // ImagePoint returns the given point converted to an image.Point,
 // with possible loss of precision.
 func (p Point) ImagePoint() image.Point {
@@ -77,6 +82,25 @@ func (p Point) GraphToOutputNoOffset(gb Rect, ob image.Rectangle) Point {
 
 	return Point{
 		X: p.X * rDx,
-		Y: p.Y * rDy,
+		Y: float64(ob.Dy()) - (p.Y * rDy),
+	}
+}
+
+// A Vector represents a set of polar coordinates.
+type Vector struct {
+	Mag, Dir float64
+}
+
+// ToPoint converts the Vector to a Point.
+func (v Vector) ToPoint() Point {
+	if v.Mag == 0 {
+		return Point{0, 0}
+	}
+
+	y, x := math.Sincos(v.Dir)
+
+	return Point{
+		X: v.Mag * x,
+		Y: v.Mag * y,
 	}
 }

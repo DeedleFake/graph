@@ -6,16 +6,10 @@ import (
 	"math"
 )
 
-// Image is a minimal version of draw.Image that only contains
-// required methods.
-type Image interface {
-	Bounds() image.Rectangle
-	Set(x, y int, c color.Color)
-}
-
-// An ImageOutput is an implementation of Output that wraps an Image.
+// An ImageOutput is an implementation of Output that wraps a
+// DotOutput, allowing it to be used as an Output.
 type ImageOutput struct {
-	Image
+	DotOutput
 
 	// C is the color to use for drawing lines.
 	C color.Color

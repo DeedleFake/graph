@@ -129,7 +129,12 @@ func main() {
 			panic(err)
 		}
 
-		err = g.Cart(next(a))
+		//err = g.Cart(next(a))
+		//if err != nil {
+		//	panic(err)
+		//}
+
+		err = g.Polar(next(a), 0, 2*math.Pi)
 		if err != nil {
 			panic(err)
 		}

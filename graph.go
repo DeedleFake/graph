@@ -18,6 +18,9 @@ import (
 // CartFunc represents a Cartesian function.
 type CartFunc func(x float64) (y float64)
 
+// PolarFunc represents a polar function.
+type PolarFunc func(theta float64) (radius float64)
+
 // A Graph calculates graphs from functions and renders to an Output.
 type Graph struct {
 	d Output
@@ -56,6 +59,9 @@ func (g *Graph) Cart(f CartFunc) error {
 	}
 
 	p := math.Abs(g.Precision)
+	if p == 0 {
+		p = .1
+	}
 
 	last := Point{math.NaN(), math.NaN()}
 	for x := r.Min.X; x < r.Max.X+p; x += p {
@@ -63,9 +69,45 @@ func (g *Graph) Cart(f CartFunc) error {
 
 		to := Point{x, y}.GraphToOutputNoOffset(r, ob)
 		to.X -= off.X
-		to.Y = float64(ob.Dy()) - (to.Y - off.Y) // BUG: This doesn't work when the y offset of the graph isn't 0.
+		to.Y = float64(ob.Dy()) - ((float64(ob.Dy()) - to.Y) - off.Y) // BUG: This doesn't work when the y offset of the graph isn't 0.
 
-		if !(math.IsNaN(last.Y) || math.IsInf(last.Y, 0) || math.IsNaN(to.Y) || math.IsInf(to.Y, 0)) {
+		if last.IsValid() && to.IsValid() {
+			err := g.d.Line(last.ImagePoint(), to.ImagePoint())
+			if err != nil {
+				return err
+			}
+		}
+
+		last = to
+	}
+
+	return nil
+}
+
+func (g *Graph) Polar(f PolarFunc, min, max float64) error {
+	r := g.Bounds.Canon()
+	ob := g.d.Bounds().Canon()
+
+	off := Point{
+		X: (r.Min.X * float64(ob.Dx()) / r.Dx()) - float64(ob.Min.X),
+		Y: (r.Min.Y * float64(ob.Dy()) / r.Dy()) - float64(ob.Min.Y),
+	}
+
+	p := math.Abs(g.Precision)
+	if p == 0 {
+		p = .1
+	}
+
+	last := Point{math.NaN(), math.NaN()}
+	for theta := min; theta < max+p; theta += p {
+		rad := f(theta)
+
+		to := Vector{rad, theta}.ToPoint().GraphToOutputNoOffset(r, ob)
+		to.X -= off.X
+		//to.Y -= off.Y
+		to.Y = float64(ob.Dy()) - ((float64(ob.Dy()) - to.Y) - off.Y)
+
+		if last.IsValid() && to.IsValid() {
 			err := g.d.Line(last.ImagePoint(), to.ImagePoint())
 			if err != nil {
 				return err
