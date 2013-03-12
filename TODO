@@ -1,1 +1,1 @@
-Change Graph to LineGraph and add DotGraph for graphing functions that draw points instead of lines.
+Get (*DotGraph).Bool() working.
