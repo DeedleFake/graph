@@ -21,6 +21,9 @@ type CartFunc func(x float64) (y float64)
 // PolarFunc represents a polar function.
 type PolarFunc func(theta float64) (radius float64)
 
+// ParamFunc represents a pair of parametric functions.
+type ParamFunc func(t float64) (x, y float64)
+
 // A Graph calculates graphs from functions and renders to an Output.
 type Graph struct {
 	d Output
@@ -104,7 +107,41 @@ func (g *Graph) Polar(f PolarFunc, min, max float64) error {
 
 		to := Vector{rad, theta}.ToPoint().GraphToOutputNoOffset(r, ob)
 		to.X -= off.X
-		//to.Y -= off.Y
+		to.Y = float64(ob.Dy()) - ((float64(ob.Dy()) - to.Y) - off.Y)
+
+		if last.IsValid() && to.IsValid() {
+			err := g.d.Line(last.ImagePoint(), to.ImagePoint())
+			if err != nil {
+				return err
+			}
+		}
+
+		last = to
+	}
+
+	return nil
+}
+
+func (g *Graph) Param(f ParamFunc, min, max float64) error {
+	r := g.Bounds.Canon()
+	ob := g.d.Bounds().Canon()
+
+	off := Point{
+		X: (r.Min.X * float64(ob.Dx()) / r.Dx()) - float64(ob.Min.X),
+		Y: (r.Min.Y * float64(ob.Dy()) / r.Dy()) - float64(ob.Min.Y),
+	}
+
+	p := math.Abs(g.Precision)
+	if p == 0 {
+		p = .1
+	}
+
+	last := Point{math.NaN(), math.NaN()}
+	for t := min; t < max+p; t += p {
+		x, y := f(t)
+
+		to := Point{x, y}.GraphToOutputNoOffset(r, ob)
+		to.X -= off.X
 		to.Y = float64(ob.Dy()) - ((float64(ob.Dy()) - to.Y) - off.Y)
 
 		if last.IsValid() && to.IsValid() {

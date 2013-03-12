@@ -10,9 +10,17 @@ import (
 	"time"
 )
 
-func next(a float64) func(float64) float64 {
+func next(a float64) graph.CartFunc {
 	return func(x float64) float64 {
 		return math.Sin(x * a)
+	}
+}
+
+func nextParam(a float64) graph.ParamFunc {
+	return func(t float64) (x, y float64) {
+		y, x = math.Sincos(t * a)
+
+		return
 	}
 }
 
@@ -134,7 +142,12 @@ func main() {
 		//	panic(err)
 		//}
 
-		err = g.Polar(next(a), 0, 2*math.Pi)
+		//err = g.Polar(next(a), 0, 2*math.Pi)
+		//if err != nil {
+		//	panic(err)
+		//}
+
+		err = g.Param(nextParam(a), 0, 2*math.Pi)
 		if err != nil {
 			panic(err)
 		}
